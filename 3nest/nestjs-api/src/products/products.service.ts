@@ -29,11 +29,19 @@ export class ProductsService {
     return product;
   }
 
-  update(id: string, updateProductDto: UpdateProductDto) {
+  async update(id: string, updateProductDto: UpdateProductDto) {
+    const product = await this.prismaService.product.findFirst({ where: { id } });
+    if(!product) {
+      throw new NotFoundError('Product', id);
+    }
     return this.prismaService.product.update({ where: { id }, data: updateProductDto });
   }
 
-  remove(id: string) {
+  async remove(id: string) {
+    const product = await this.prismaService.product.findFirst({ where: { id } });
+    if(!product) {
+      throw new NotFoundError('Product', id);
+    }
     this.prismaService.product.delete({ where: { id } });
   }
 }
