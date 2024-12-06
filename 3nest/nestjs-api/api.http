@@ -29,3 +29,8 @@ Content-Type: application/json
 }
 ###
 DELETE http://localhost:3000/products/{{productId}}
+
+###
+GET http://localhost:3000/products/query?page=2
+Content-Type: application/json
+

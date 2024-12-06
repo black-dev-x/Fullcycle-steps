@@ -4,6 +4,7 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductSlugAlreadyExistsError } from './products.errors'
 import { NotFoundError } from 'src/common/errors'
+import { FindProductsDto } from './dto/find-products.dto'
 
 @Injectable()
 export class ProductsService {
@@ -21,7 +22,7 @@ export class ProductsService {
     return this.prismaService.product.findMany();
   }
 
-  findAllBy(query: ProductQuery) {
+  findAllBy(query: FindProductsDto) {
     const { name, page = 1, limit = 15 } = query;
     const where = name && { name: { contains: name } };
     return this.prismaService.product.findMany({
@@ -67,8 +68,3 @@ export class ProductsService {
   }
 }
 
-interface ProductQuery {
-  name? : string;
-  page?: number;
-  limit?: number;
-}
