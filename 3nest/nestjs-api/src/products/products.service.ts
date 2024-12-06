@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductSlugAlreadyExistsError } from './products.errors'
+import { NotFoundError } from 'src/common/errors'
 
 @Injectable()
 export class ProductsService {
@@ -20,8 +21,12 @@ export class ProductsService {
     return this.prismaService.product.findMany();
   }
 
-  findOne(id: string) {
-    return this.prismaService.product.findFirst({ where: { id } });
+  async findOne(id: string) {
+    const product = await this.prismaService.product.findFirst({ where: { id } });
+    if(!product) {
+      throw new NotFoundError('Product', id);
+    }
+    return product;
   }
 
   update(id: string, updateProductDto: UpdateProductDto) {
