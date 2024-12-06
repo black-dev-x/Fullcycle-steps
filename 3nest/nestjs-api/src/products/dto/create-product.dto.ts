@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsString, Matches, MaxLength, Min, isNotEmpty } from 'class-validator'
+import { IsNotEmpty, IsNumber, IsString, Matches, MaxLength, Min } from 'class-validator'
 
 export class CreateProductDto {
   @IsNotEmpty()
