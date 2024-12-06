@@ -4,6 +4,7 @@ CREATE TABLE "Product" (
     "name" TEXT NOT NULL,
     "slug" TEXT NOT NULL,
     "price" REAL NOT NULL,
+    "description" TEXT NOT NULL,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL
 );
