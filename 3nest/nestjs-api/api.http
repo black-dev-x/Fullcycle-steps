@@ -22,6 +22,10 @@ GET http://localhost:3000/products/{{productId}}
 
 ###
 PATCH http://localhost:3000/products/{{productId}}
+Content-Type: application/json
 
+{
+    "name": "Renamed Latest Product"
+}
 ###
 DELETE http://localhost:3000/products/{{productId}}
