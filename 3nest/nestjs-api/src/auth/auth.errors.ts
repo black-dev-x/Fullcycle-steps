@@ -8,6 +8,12 @@ export class ErrorCreatingAccount extends Error {
   }
 }
 
+export class AuthorizationError extends Error {
+  constructor() {
+    super(`Unauthorized`);
+    this.name = 'AuthorizationError';
+  }
+}
 @Catch(ErrorCreatingAccount)
 export class ErrorCreatingAccountFilter implements ExceptionFilter {
   
