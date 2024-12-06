@@ -4,7 +4,7 @@ import { PrismaService } from 'src/prisma/prisma.service'
 import { CreateUserDto } from './create-user.dto'
 import { UserRoles } from './roles'
 import { AuthorizationError, ErrorCreatingAccount } from './auth.errors'
-import bcrypt from 'bcrypt'
+import * as bcrypt from 'bcrypt'
 
 @Injectable()
 export class AuthService {
@@ -27,7 +27,7 @@ export class AuthService {
     if(savedUser) {
       throw new ErrorCreatingAccount();
     }
-    return this.prismaService.user.create(
+    return await this.prismaService.user.create(
       { data: 
         {...user,
           password: await bcrypt.hashSync(user.password, 10), 

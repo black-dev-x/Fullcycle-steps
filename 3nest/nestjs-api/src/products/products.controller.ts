@@ -20,7 +20,6 @@ export class ProductsController {
 
   @Get('query')
   findAllBy(@Query() query: FindProductsDto) {
-    console.log(query)
     return this.productsService.findAllBy(query);
   }
 

@@ -16,17 +16,17 @@ export class AuthModule implements OnModuleInit {
       email: 'customer@customer.com',
       password: 'customer'
     }
-    const savedUser = this.authService.findByEmail(user.email)
+    const savedUser = await this.authService.findByEmail(user.email)
     if(!savedUser) {
-      this.authService.createUser(user)
+      await this.authService.createUser(user)
     }
     const admin = {
       email: 'admin@admin.com', 
       password: 'admin'
     }
-    const savedAdmin = this.authService.findByEmail(admin.email)
+    const savedAdmin = await this.authService.findByEmail(admin.email)
     if(!savedAdmin) {
-      this.authService.createUser(admin, UserRoles.Admin)
+      await this.authService.createUser(admin, UserRoles.Admin)
     }
   }
 }
