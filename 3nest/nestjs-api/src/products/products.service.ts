@@ -22,6 +22,7 @@ export class ProductsService {
   }
 
   async findOne(id: string) {
+    await this.throwErrorIfProductIsNotFound(id);
     const product = await this.prismaService.product.findFirst({ where: { id } });
     if(!product) {
       throw new NotFoundError('Product', id);
@@ -29,19 +30,29 @@ export class ProductsService {
     return product;
   }
 
+  
   async update(id: string, updateProductDto: UpdateProductDto) {
-    const product = await this.prismaService.product.findFirst({ where: { id } });
-    if(!product) {
-      throw new NotFoundError('Product', id);
+    await this.throwErrorIfProductIsNotFound(id);
+    const checkSlug = await this.prismaService.product.findFirst({ where: { slug: updateProductDto.slug } });
+    if(checkSlug && checkSlug.id !== id) {
+      throw new ProductSlugAlreadyExistsError(checkSlug.slug);
     }
     return this.prismaService.product.update({ where: { id }, data: updateProductDto });
   }
 
   async remove(id: string) {
+    await this.throwErrorIfProductIsNotFound(id);
     const product = await this.prismaService.product.findFirst({ where: { id } });
     if(!product) {
       throw new NotFoundError('Product', id);
     }
     this.prismaService.product.delete({ where: { id } });
+  }
+
+  private async throwErrorIfProductIsNotFound(id: string) {
+    const product = await this.prismaService.product.findFirst({ where: { id } });
+    if(!product) {
+      throw new NotFoundError('Product', id);
+    }
   }
 }
