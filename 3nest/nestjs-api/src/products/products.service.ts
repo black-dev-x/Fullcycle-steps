@@ -21,6 +21,16 @@ export class ProductsService {
     return this.prismaService.product.findMany();
   }
 
+  findAllBy(query: ProductQuery) {
+    const { name, page = 1, limit = 15 } = query;
+    const where = name && { name: { contains: name } };
+    return this.prismaService.product.findMany({
+      where,
+      skip: (page - 1) * limit,
+      take: limit
+    });
+  }
+
   async findOne(id: string) {
     await this.throwErrorIfProductIsNotFound(id);
     const product = await this.prismaService.product.findFirst({ where: { id } });
@@ -55,4 +65,10 @@ export class ProductsService {
       throw new NotFoundError('Product', id);
     }
   }
+}
+
+interface ProductQuery {
+  name? : string;
+  page?: number;
+  limit?: number;
 }
