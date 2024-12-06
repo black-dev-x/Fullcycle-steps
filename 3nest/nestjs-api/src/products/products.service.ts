@@ -2,12 +2,17 @@ import { PrismaService } from './../prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { ProductSlugAlreadyExistsError } from './products.errors'
 
 @Injectable()
 export class ProductsService {
   constructor(private prismaService: PrismaService) {}
 
-  create(createProductDto: CreateProductDto) {
+  async create(createProductDto: CreateProductDto) {
+    const product = await this.prismaService.product.findFirst({ where: { slug: createProductDto.slug } });
+    if(product) {
+      throw new ProductSlugAlreadyExistsError(product.slug);
+    }
     return this.prismaService.product.create({ data: createProductDto });
   }
 
