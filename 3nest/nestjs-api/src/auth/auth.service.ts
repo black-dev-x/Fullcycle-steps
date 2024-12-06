@@ -5,17 +5,23 @@ import { CreateUserDto } from './create-user.dto'
 import { UserRoles } from './roles'
 import { AuthorizationError, ErrorCreatingAccount } from './auth.errors'
 import * as bcrypt from 'bcrypt'
+import { JwtService } from '@nestjs/jwt'
 
 @Injectable()
 export class AuthService {
   
-  constructor(private prismaService: PrismaService) {}
+  constructor(private prismaService: PrismaService, private jwtService: JwtService) {}
 
   async login(data: LoginDto) {
     const user = await this.prismaService.user.findFirst({ where: { email: data.email } })
     if(!user || !bcrypt.compareSync(data.password, user.password)) {
       throw new AuthorizationError();
     }
+    const payload = {
+      sub: user.id,
+      role: user.role
+    }
+    return { access_token: this.jwtService.sign(payload) }
   }
 
   async findByEmail(email: string) {

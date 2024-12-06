@@ -2,8 +2,18 @@ import { Module, OnModuleInit } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { UserRoles } from './roles'
+import { JwtModule } from '@nestjs/jwt'
 
 @Module({
+  imports: [JwtModule.register(
+    { 
+      secret: 'secret', 
+      signOptions: 
+        { 
+          expiresIn: '1d' 
+        } 
+    }
+  )],
   controllers: [AuthController],
   providers: [AuthService]
 })
