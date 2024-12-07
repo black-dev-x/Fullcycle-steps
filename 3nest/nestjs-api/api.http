@@ -1,6 +1,20 @@
 ###
-GET http://localhost:3000/products
+# @name  Login
+POST http://localhost:3000/auth
+Content-Type: application/json
 
+{
+    "email": "admin@admin.com",
+    "password": "admin"
+}
+###
+@jwt = {{ Login.response.body.access_token }}
+###
+
+###
+GET http://localhost:3000/products
+Authorization: Bearer {{ jwt }}
+Content-Type: application/json
 ###
 # @name createProduct
 POST http://localhost:3000/products
@@ -34,11 +48,3 @@ DELETE http://localhost:3000/products/{{productId}}
 GET http://localhost:3000/products/query?page=2
 Content-Type: application/json
 
-###
-POST http://localhost:3000/auth
-Content-Type: application/json
-
-{
-    "email": "admin@admin.com",
-    "password": "admin"
-}

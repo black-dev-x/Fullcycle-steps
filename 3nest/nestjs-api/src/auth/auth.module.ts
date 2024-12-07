@@ -3,12 +3,12 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { UserRoles } from './roles'
 import { JwtModule } from '@nestjs/jwt'
-import { AuthGuard } from './auth.guard'
 
 @Global()
 @Module({
   imports: [JwtModule.register(
     { 
+      global: true,
       secret: 'secret', 
       signOptions: 
         { 
@@ -18,7 +18,7 @@ import { AuthGuard } from './auth.guard'
   )],
   controllers: [AuthController],
   providers: [AuthService],
-  exports: [AuthService, AuthGuard]
+  exports: [AuthService]
 })
 export class AuthModule implements OnModuleInit {
 
