@@ -7,6 +7,10 @@ import { AuthorizationError, ErrorCreatingAccount } from './auth.errors'
 import * as bcrypt from 'bcrypt'
 import { JwtService } from '@nestjs/jwt'
 
+export type AuthServicePayload = {
+  sub: string;
+  role: string;
+}
 @Injectable()
 export class AuthService {
   
@@ -17,7 +21,7 @@ export class AuthService {
     if(!user || !bcrypt.compareSync(data.password, user.password)) {
       throw new AuthorizationError();
     }
-    const payload = {
+    const payload: AuthServicePayload = {
       sub: user.id,
       role: user.role
     }
