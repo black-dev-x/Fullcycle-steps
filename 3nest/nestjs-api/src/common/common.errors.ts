@@ -11,6 +11,7 @@ export class NotFoundError extends Error {
 @Catch(NotFoundError)
 export class NotFoundFilter implements ExceptionFilter {
   catch(exception: any, host: ArgumentsHost) {
+    console.log("Cai no filter?")
     const context = host.switchToHttp();
     const response = context.getResponse<Response>();
     response.status(404).json({

@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductSlugAlreadyExistsError } from './products.errors'
-import { NotFoundError } from 'src/common/errors'
+import { NotFoundError } from 'src/common/common.errors'
 import { FindProductsDto } from './dto/find-products.dto'
 
 @Injectable()
@@ -52,7 +52,10 @@ export class ProductsService {
   }
 
   async remove(id: string) {
-    await this.throwErrorIfProductIsNotFound(id);
+    const product = await this.prismaService.product.findFirst({ where: { id } });
+    if(!product) {
+      throw new NotFoundError('Product', id);
+    }
     this.prismaService.product.delete({ where: { id } });
   }
 
