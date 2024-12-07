@@ -32,7 +32,6 @@ export class ResourceNotFoundError extends Error {
 export class ResourceNotFoundErrorFilter implements ExceptionFilter {
   
   catch(exception: any, host: ArgumentsHost) {
-    console.log("Cai no filter?")
     const context = host.switchToHttp();
     const response = context.getResponse<Response>();
     response.status(404).json({
