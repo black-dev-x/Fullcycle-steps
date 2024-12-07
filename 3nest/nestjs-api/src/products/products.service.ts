@@ -2,8 +2,7 @@ import { PrismaService } from './../prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { ProductSlugAlreadyExistsError } from './products.errors'
-import { NotFoundError } from 'src/common/common.errors'
+import { ProductSlugAlreadyExistsError, ResourceNotFoundError } from './products.errors'
 import { FindProductsDto } from './dto/find-products.dto'
 
 @Injectable()
@@ -36,7 +35,7 @@ export class ProductsService {
     await this.throwErrorIfProductIsNotFound(id);
     const product = await this.prismaService.product.findFirst({ where: { id } });
     if(!product) {
-      throw new NotFoundError('Product', id);
+      throw new ResourceNotFoundError('Product', id);
     }
     return product;
   }
@@ -52,17 +51,14 @@ export class ProductsService {
   }
 
   async remove(id: string) {
-    const product = await this.prismaService.product.findFirst({ where: { id } });
-    if(!product) {
-      throw new NotFoundError('Product', id);
-    }
-    this.prismaService.product.delete({ where: { id } });
+    await this.throwErrorIfProductIsNotFound(id);
+    await this.prismaService.product.delete({ where: { id } });
   }
 
   private async throwErrorIfProductIsNotFound(id: string) {
     const product = await this.prismaService.product.findFirst({ where: { id } });
     if(!product) {
-      throw new NotFoundError('Product', id);
+      throw new ResourceNotFoundError('Product', id);
     }
   }
 }

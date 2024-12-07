@@ -20,3 +20,24 @@ export class ProductSlugAlreadyExistsFilter implements ExceptionFilter {
     })
   }
 }
+
+export class ResourceNotFoundError extends Error {
+  constructor(entity: string, value: string, key: string = 'id') {
+    super(`${entity} with ${key} ${value} not found`);
+    this.name = 'ResourceNotFoundError';
+  }
+}
+
+@Catch(ResourceNotFoundError)
+export class ResourceNotFoundErrorFilter implements ExceptionFilter {
+  
+  catch(exception: any, host: ArgumentsHost) {
+    console.log("Cai no filter?")
+    const context = host.switchToHttp();
+    const response = context.getResponse<Response>();
+    response.status(404).json({
+      statusCode: 404,
+      message: exception.message
+    });
+  }
+}

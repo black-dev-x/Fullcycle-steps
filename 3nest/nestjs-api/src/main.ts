@@ -1,8 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ProductSlugAlreadyExistsFilter } from './products/products.errors'
+import { ProductSlugAlreadyExistsFilter, ResourceNotFoundErrorFilter } from './products/products.errors'
 import { ValidationPipe } from '@nestjs/common'
-import { NotFoundFilter } from './common/common.errors'
 import { ErrorCreatingAccountFilter } from './auth/auth.errors'
 
 async function bootstrap() {
@@ -11,7 +10,7 @@ async function bootstrap() {
   app.useGlobalFilters(
     new ProductSlugAlreadyExistsFilter(), 
     new ErrorCreatingAccountFilter(),
-    new NotFoundFilter());
+    new ResourceNotFoundErrorFilter());
   
   app.useGlobalPipes(
     new ValidationPipe(
