@@ -7,7 +7,7 @@ export class AuthGuard implements CanActivate {
   
   constructor(private jwtService: JwtService) {}
 
-  canActivate(context: ExecutionContext): boolean {
+  canActivate(context: ExecutionContext): boolean { 
     try {
       const request = context.switchToHttp().getRequest<Request>();
       const token = this.extractTokenFromHeader(request);

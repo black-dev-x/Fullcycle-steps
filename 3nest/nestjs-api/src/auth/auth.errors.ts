@@ -4,7 +4,7 @@ import { Response } from 'express'
 export class ErrorCreatingAccount extends Error {
   constructor() {
     super(`Error creating account`);
-    this.name = 'ProductSlugAlreadyExistsError';
+    this.name = 'Error creating account';
   }
 }
 

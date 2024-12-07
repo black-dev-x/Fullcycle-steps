@@ -9,10 +9,9 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.useGlobalFilters(
-    new ProductSlugAlreadyExistsFilter(), 
     new NotFoundFilter(), 
-    new ErrorCreatingAccountFilter()
-  );
+    new ProductSlugAlreadyExistsFilter(), 
+    new ErrorCreatingAccountFilter());
   
   app.useGlobalPipes(
     new ValidationPipe(

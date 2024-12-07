@@ -8,6 +8,15 @@ Content-Type: application/json
     "password": "admin"
 }
 ###
+# @name  Create Account
+POST http://localhost:3000/auth/register
+Content-Type: application/json
+
+{
+    "email": "admina@admin.com",
+    "password": "admin"
+}
+###
 @jwt = {{ Login.response.body.access_token }}
 ###
 
@@ -18,6 +27,7 @@ Content-Type: application/json
 ###
 # @name createProduct
 POST http://localhost:3000/products
+Authorization: Bearer {{ jwt }}
 Content-Type: application/json
 
 {
@@ -33,17 +43,18 @@ Content-Type: application/json
 
 ###
 GET http://localhost:3000/products/{{productId}}
+Authorization: Bearer {{ jwt }}
 
 ###
 PATCH http://localhost:3000/products/{{productId}}
 Content-Type: application/json
-
+Authorization: Bearer {{ jwt }}
 {
     "name": "Renamed Latest Product"
 }
 ###
-DELETE http://localhost:3000/products/{{productId}}
-
+DELETE http://localhost:3000/products/{{ productId }}
+Authorization: Bearer {{ jwt }}
 ###
 GET http://localhost:3000/products/query?page=2
 Content-Type: application/json

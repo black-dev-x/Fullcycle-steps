@@ -53,10 +53,6 @@ export class ProductsService {
 
   async remove(id: string) {
     await this.throwErrorIfProductIsNotFound(id);
-    const product = await this.prismaService.product.findFirst({ where: { id } });
-    if(!product) {
-      throw new NotFoundError('Product', id);
-    }
     this.prismaService.product.delete({ where: { id } });
   }
 
