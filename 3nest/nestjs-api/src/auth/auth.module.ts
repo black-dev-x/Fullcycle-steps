@@ -1,9 +1,11 @@
-import { Module, OnModuleInit } from '@nestjs/common';
+import { Global, Module, OnModuleInit } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { UserRoles } from './roles'
 import { JwtModule } from '@nestjs/jwt'
+import { AuthGuard } from './auth.guard'
 
+@Global()
 @Module({
   imports: [JwtModule.register(
     { 
@@ -15,7 +17,8 @@ import { JwtModule } from '@nestjs/jwt'
     }
   )],
   controllers: [AuthController],
-  providers: [AuthService]
+  providers: [AuthService],
+  exports: [AuthService, AuthGuard]
 })
 export class AuthModule implements OnModuleInit {
 
