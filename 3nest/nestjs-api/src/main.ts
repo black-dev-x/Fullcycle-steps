@@ -5,7 +5,7 @@ import { ValidationPipe } from '@nestjs/common'
 import { ErrorCreatingAccountFilter } from './auth/auth.errors'
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {cors: true});
 
   app.useGlobalFilters(
     new ProductSlugAlreadyExistsFilter(), 
