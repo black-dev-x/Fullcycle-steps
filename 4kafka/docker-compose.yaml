@@ -1,0 +1,89 @@
+services:
+  order-http:
+    build: .
+    ports:
+      - 3000:3000
+    depends_on:
+      kafka:
+        condition: service_healthy
+  
+  order-consumer:
+    build: .
+    command: ["npm", "run", "start", "order-consumer"]
+    deploy:
+      replicas: 2
+    depends_on:
+      kafka:
+        condition: service_healthy
+  
+  nfe-consumer:
+    build: .
+    command: ["npm", "run", "start", "nfe-consumer"]
+    deploy:
+      replicas: 3
+    depends_on:
+      kafka:
+        condition: service_healthy
+  
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.3.0
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+
+  kafka:
+    image: confluentinc/cp-kafka:7.3.0
+    depends_on:
+      - zookeeper
+    ports:
+      - 9092:9092
+      - 9094:9094
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_LISTENERS: INTERNAL://:9092,OUTSIDE://:9094
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:9092,OUTSIDE://host.docker.internal:9094
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,OUTSIDE:PLAINTEXT
+    extra_hosts:
+      - "host.docker.internal:172.17.0.1"
+    healthcheck:
+      test: kafka-topics --bootstrap-server kafka:9092 --list
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # control-center:
+  #   image: confluentinc/cp-enterprise-control-center:7.3.0
+  #   hostname: control-center
+  #   depends_on:
+  #     - kafka
+  #   ports:
+  #     - "9021:9021"
+  #   environment:
+  #     CONTROL_CENTER_BOOTSTRAP_SERVERS: 'kafka:9092'
+  #     CONTROL_CENTER_REPLICATION_FACTOR: 1
+  #     PORT: 9021
+
+  redpandadata:
+    image: docker.redpanda.com/redpandadata/console:v2.4.3
+    entrypoint: /bin/sh
+    command: -c "echo \"$$CONSOLE_CONFIG_FILE\" > /tmp/config.yml; /app/console"
+    environment:
+      CONFIG_FILEPATH: /tmp/config.yml
+      CONSOLE_CONFIG_FILE: |
+        kafka:
+          brokers: ["kafka:9092"]
+          schemaRegistry:
+            enabled: false
+    ports:
+      - 8080:8080
+  
+  fortio:
+    image: fortio/fortio
+    command: ["load", "-t", "5s", "-qps", "10", "-c", "2", "-timeout", "20s", "-logger-force-color", "-allow-initial-errors", "-H", "Content-Type: application/json", "-payload-file", "/tmp/payload.json", "http://order-http:3000/orders"]
+    volumes:
+      - ./payload.json:/tmp/payload.json
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    
