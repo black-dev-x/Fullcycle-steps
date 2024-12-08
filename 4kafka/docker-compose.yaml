@@ -6,6 +6,9 @@ services:
     depends_on:
       kafka:
         condition: service_healthy
+    volumes:
+      - node-modules-http:/home/node/app/node_modules
+
   
   order-consumer:
     build: .
@@ -15,6 +18,8 @@ services:
     depends_on:
       kafka:
         condition: service_healthy
+    volumes:
+      - node-modules-consumer:/home/node/app/node_modules
   
   nfe-consumer:
     build: .
@@ -24,6 +29,8 @@ services:
     depends_on:
       kafka:
         condition: service_healthy
+    volumes:
+      - node-modules-nfe-consumer:/home/node/app/node_modules
   
   zookeeper:
     image: confluentinc/cp-zookeeper:7.3.0
@@ -86,4 +93,8 @@ services:
       - ./payload.json:/tmp/payload.json
     extra_hosts:
       - "host.docker.internal:host-gateway"
-    
+
+volumes:
+  node-modules-http:
+  node-modules-consumer:
+  node-modules-nfe-consumer:
